@@ -1,4 +1,4 @@
-package org.stillwithyou.backend;
+package org.stillwithyou;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
