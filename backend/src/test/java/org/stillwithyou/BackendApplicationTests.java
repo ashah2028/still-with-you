@@ -1,4 +1,4 @@
-package org.stillwithyou.backend;
+package org.stillwithyou;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

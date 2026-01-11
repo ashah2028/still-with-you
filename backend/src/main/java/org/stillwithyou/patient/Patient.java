@@ -1,97 +1,53 @@
 package org.stillwithyou.patient;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Patient Entity - represents a hospital patient in the database
- *
- * This is the "Model" layer in MVC - it defines:
- * 1. The database table structure (columns, types, constraints)
- * 2. How Java objects map to database rows
- * 3. Validation rules for the data
- */
-@Entity  // Tells Spring this is a JPA entity that maps to a database table
-@Table(name = "patients")  // Specifies the exact table name in PostgreSQL
+@Entity
+@Table(name = "patients")
 public class Patient {
 
-    /**
-     * Primary Key - uniquely identifies each patient
-     * Using UUID instead of auto-increment numbers because:
-     * - UUIDs are globally unique (good for distributed systems)
-     * - Can't guess other patient IDs (security)
-     * - Can generate IDs before saving to database
-     */
-    @Id  // Marks this as the primary key
-    @GeneratedValue(strategy = GenerationType.UUID)  // Auto-generate UUIDs
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /**
-     * Patient's full name
-     * @NotBlank - ensures it's not null, empty, or just whitespace
-     * nullable = false - enforces NOT NULL constraint in database
-     */
     @NotBlank(message = "Patient name is required")
     @Column(nullable = false)
     private String name;
 
-    /**
-     * Patient's email - used for authentication
-     * @Email - validates email format
-     * unique = true - ensures no duplicate emails in database
-     */
-    @Email(message = "Email must be valid")
-    @NotBlank(message = "Email is required")
-    @Column(nullable = false, unique = true)
-    private String email;
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
+    @Column(name = "phone_number", nullable = false, unique = true)
+    private String phoneNumber;
 
-    /**
-     * Optional hospital information
-     * No validation constraints = these fields can be null
-     * Using snake_case column names to match PostgreSQL conventions
-     */
     @Column(name = "hospital_name")
     private String hospitalName;
 
     @Column(name = "room_number")
     private String roomNumber;
 
-    /**
-     * Audit timestamps - automatically track when records are created/updated
-     * updatable = false on createdAt means it never changes after creation
-     */
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    /**
-     * JPA Lifecycle Hooks - automatically called by Spring
-     * @PrePersist runs before the entity is first saved to database
-     */
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * @PreUpdate runs before the entity is updated in database
-     */
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
-    // ===== GETTERS & SETTERS =====
-    // Spring JPA requires these to access/modify fields
-    // In production, you'd use Lombok @Data to auto-generate these
-
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -108,12 +64,12 @@ public class Patient {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getHospitalName() {
